@@ -1,0 +1,9 @@
+{
+  "name": "opencode-design-verify",
+  "private": true,
+  "type": "module",
+  "description": "Headless verification for design artifacts",
+  "dependencies": {
+    "playwright": "^1.65.0"
+  }
+}

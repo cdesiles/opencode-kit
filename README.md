@@ -123,3 +123,7 @@ The path is hardcoded in the agent prompt and five skills, which is why `make in
 - The `SKILL.md` files also work in Claude Code: copy `skills/*` into `~/.claude/skills`.
 - An agent with the same ID already present merges instead of replacing: permission rules append. Remove the old file
   if you want only the kit's rules.
+
+## License
+
+Apache-2.0. See [LICENSE](LICENSE).

@@ -52,6 +52,7 @@ Without the Makefile, four steps:
 | Agent | Command | Skills it owns | What it does |
 | --- | --- | --- | --- |
 | `designer` | `/design` | `design-*` | Design systems, decks, documents, prototypes and wireframes as self-contained HTML; verifies them in headless Chromium |
+| `grill` | `/grill` | — | Staff-engineer sparring partner: challenges scope, priority, evidence and architecture before work starts, one decision at a time |
 
 `pptx` and `pdf` are used for export when present; they are separate skills, not part of this kit.
 

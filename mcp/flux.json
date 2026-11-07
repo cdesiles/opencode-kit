@@ -1,0 +1,8 @@
+{
+  "description": "FLUX image generation by Black Forest Labs, billed to your BFL account (sign in with /mcps)",
+  "other_agents": "deny",
+  "server": {
+    "type": "remote",
+    "url": "https://mcp.bfl.ai"
+  }
+}

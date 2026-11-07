@@ -1,24 +1,34 @@
 #!/usr/bin/env bash
 # Wire this repo into an OpenCode config directory.
 #
-#   wire.sh install   <opencode-dir> <repo> [link|copy]
+#   wire.sh install   <opencode-dir> <repo> [link|copy] [selection-file]
 #   wire.sh uninstall <opencode-dir> <repo>
 #
-# every agents/*.md and commands/*.md file becomes a symlink (default) or a copy
-# inside <opencode-dir>; every lib/* directory is always symlinked, so scripts
-# keep resolving their node_modules inside the repo. Anything replaced is moved
-# aside to <name>.bak.<timestamp> and restored by uninstall.
+# install puts the agents/*.md and commands/*.md files named in the selection
+# file (written by kit.py) into <opencode-dir> as symlinks (default) or
+# copies, and symlinks the lib/* directories it names, so scripts keep
+# resolving their node_modules inside the repo. Without a selection file it
+# wires everything. Anything replaced is moved aside to <name>.bak.<timestamp>.
+# Whatever the selection leaves out is removed the way uninstall removes it:
+# only links into the repo and unmodified copies go, and the newest backup
+# comes back.
 
 set -euo pipefail
 
-action=${1:?usage: wire.sh <install|uninstall> <opencode-dir> <repo> [link|copy]}
+action=${1:?usage: wire.sh <install|uninstall> <opencode-dir> <repo> [link|copy] [selection-file]}
 opencode_dir=${2:?missing opencode directory}
 repo=${3:?missing repo path}
 mode=${4:-link}
+selection=${5:-}
 
 agents_dir="$opencode_dir/agents"
 commands_dir="$opencode_dir/commands"
 lib_dir="$opencode_dir/lib"
+
+if [ -n "$selection" ] && [ ! -s "$selection" ]; then
+	echo "empty or missing selection file: $selection" >&2
+	exit 2
+fi
 
 # Newest backup of a path, if any.
 latest_backup() {
@@ -27,9 +37,24 @@ latest_backup() {
 	printf '%s' "$backup"
 }
 
+# Whether <dest> is what install put there for <src>: a link to it, or an unmodified copy.
+ours() {
+	local src=$1 dest=$2
+	if [ -L "$dest" ]; then
+		[ "$dest" -ef "$src" ]
+	else
+		[ -f "$dest" ] && cmp -s "$src" "$dest"
+	fi
+}
+
+# Whether the selection names "<kind> <name>". Everything counts when there is none.
+selected() {
+	[ -z "$selection" ] || grep -qxF "$1 $2" "$selection"
+}
+
 place_file() {
 	local src=$1 dest=$2
-	if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+	if [ -e "$dest" ] && [ ! -L "$dest" ] && ! ours "$src" "$dest"; then
 		mv "$dest" "$dest.bak.$(date +%Y%m%d-%H%M%S)"
 		echo "backed up $dest"
 	fi
@@ -55,50 +80,53 @@ place_dir() {
 }
 
 remove_path() {
-	local target=$1 backup
-	if [ -L "$target" ]; then
-		rm -f "$target"
-		echo "removed  $target"
+	local src=$1 dest=$2 backup
+	if ours "$src" "$dest"; then
+		rm -f "$dest"
+		echo "removed  $dest"
 	fi
-	backup=$(latest_backup "$target")
+	if [ -e "$dest" ] || [ -L "$dest" ]; then
+		return 0
+	fi
+	backup=$(latest_backup "$dest")
 	if [ -n "$backup" ]; then
-		mv "$backup" "$target"
-		echo "restored $target from $backup"
+		mv "$backup" "$dest"
+		echo "restored $dest from $backup"
+	fi
+}
+
+# Place <src> at <dest> when install selects it, otherwise take it back out.
+wire() {
+	local kind=$1 src=$2 dest=$3
+	if [ "$action" = uninstall ] || ! selected "$kind" "$(basename "$dest" .md)"; then
+		remove_path "$src" "$dest"
+	elif [ -d "$src" ]; then
+		place_dir "$src" "$dest"
+	else
+		place_file "$src" "$dest"
 	fi
 }
 
 case "$action" in
 install)
 	mkdir -p "$agents_dir" "$commands_dir" "$lib_dir"
-	for f in "$repo"/agents/*.md; do
-		[ -e "$f" ] || continue
-		place_file "$f" "$agents_dir/$(basename "$f")"
-	done
-	for f in "$repo"/commands/*.md; do
-		[ -e "$f" ] || continue
-		place_file "$f" "$commands_dir/$(basename "$f")"
-	done
-	for d in "$repo"/lib/*/; do
-		[ -d "$d" ] || continue
-		place_dir "${d%/}" "$lib_dir/$(basename "$d")"
-	done
 	;;
-uninstall)
-	for f in "$repo"/agents/*.md; do
-		[ -e "$f" ] || continue
-		remove_path "$agents_dir/$(basename "$f")"
-	done
-	for f in "$repo"/commands/*.md; do
-		[ -e "$f" ] || continue
-		remove_path "$commands_dir/$(basename "$f")"
-	done
-	for d in "$repo"/lib/*/; do
-		[ -d "$d" ] || continue
-		remove_path "$lib_dir/$(basename "$d")"
-	done
-	;;
+uninstall) ;;
 *)
 	echo "unknown action: $action" >&2
 	exit 2
 	;;
 esac
+
+for f in "$repo"/agents/*.md; do
+	[ -e "$f" ] || continue
+	wire agent "$f" "$agents_dir/$(basename "$f")"
+done
+for f in "$repo"/commands/*.md; do
+	[ -e "$f" ] || continue
+	wire command "$f" "$commands_dir/$(basename "$f")"
+done
+for d in "$repo"/lib/*/; do
+	[ -d "$d" ] || continue
+	wire lib "${d%/}" "$lib_dir/$(basename "$d")"
+done

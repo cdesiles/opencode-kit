@@ -1,0 +1,8 @@
+{
+  "description": "Headless browser to click through pages, fill forms and take screenshots",
+  "other_agents": "ask",
+  "server": {
+    "type": "local",
+    "command": ["npx", "-y", "@playwright/mcp@latest", "--headless", "--isolated", "--allow-unrestricted-file-access"]
+  }
+}

@@ -36,4 +36,4 @@ One page, frames in a wrapping grid, `align-items: start`. Fixed frame width aro
 
 ## Finishing
 
-Verify once, then stop. Wireframes don't need a screenshot review loop — they need a decision from the person. End by asking which frame or combination to take forward.
+Verify once, then stop. Wireframes stay outside the design system on purpose, so ignore the verifier's `tokens` notes here. They don't need a screenshot review loop — they need a decision from the person. End by asking which frame or combination to take forward.

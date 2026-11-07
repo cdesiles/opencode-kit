@@ -39,7 +39,7 @@ State the flow before building: entry point, the two or three decisions the user
 
 ## Look
 
-Build from the project's design system if there is one. If not, `design-aesthetic` first — a prototype with default browser styling is not reviewable, because the reviewer can't separate the missing design from the missing behaviour.
+`<link rel="stylesheet" href="tokens.css">` then `<link rel="stylesheet" href="components.css">` in `<head>`, then build from those tokens and classes. If there is no system yet, run `design-aesthetic` first and create the token file — a prototype with default browser styling is not reviewable, because the reviewer can't separate the missing design from the missing behaviour.
 
 Don't wrap the screen in a MacBook or iPhone frame unless the person asked for device context. The frame steals attention from the interface and breaks inside a narrow panel.
 
@@ -49,4 +49,4 @@ Don't wrap the screen in a MacBook or iPhone frame unless the person asked for d
 node ~/.config/opencode/lib/design/verify.mjs "design/Prototype.html" --full --out design/.verify/prototype.png
 ```
 
-Then click through it yourself in a browser if you can, or read the screenshot and trace the state machine by hand. Check that each control has an obvious next state and that no path ends in a blank screen.
+Then click through it with the Playwright tools if they are available, or read the screenshot and trace the state machine by hand. Check that each control has an obvious next state and that no path ends in a blank screen.

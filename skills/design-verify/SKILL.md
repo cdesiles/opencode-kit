@@ -33,6 +33,12 @@ It serves the file on a throwaway localhost port, loads it headless, and prints 
 - **`images[].loaded: false`** — broken asset or a wrong relative path.
 - **`metrics.nodeCount`** — a sanity check, not a target.
 
+## Check token discipline
+
+Before judging the design, check that it's actually using the system. When `tokens.css` sits next to the artifact, the verifier does this for you under `tokens`: it warns when the page doesn't link the file, and lists every colour literal — hex, `oklch()`, `rgb()` and the like — in the page's own CSS and in its other local stylesheets, such as `components.css`.
+
+Every hit is either a token that should exist or a value that bypassed the file. Structural CSS (a deck's scale transform, a poster's grid) legitimately contains px numbers; colour literals almost never do. Neutral viewer chrome, like a deck's letterbox or the desk around a document page, uses named colours such as `black` and `white`.
+
 ## Then look at the screenshot
 
 Open the file. Judge, in this order:
@@ -47,5 +53,15 @@ Open the file. Judge, in this order:
 ## Fix and re-run
 
 Fix from the error text directly; don't re-read the whole file to find the line. Re-run after each substantive change. Three rounds is the limit — after that, hand it over with an honest note about what's still wrong.
+
+## Export
+
+When the artifact is going somewhere without the folder:
+
+```
+node ~/.config/opencode/lib/design/inline.mjs "design/Foo.html"
+```
+
+That writes `Foo.standalone.html` with the local stylesheets copied in. Run the verifier on the standalone copy as well — inlining is where relative paths and `url()` references break.
 
 Never say a design is done because the script exited 0. The script doesn't know whether it looks good.

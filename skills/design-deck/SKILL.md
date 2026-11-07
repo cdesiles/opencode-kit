@@ -12,6 +12,16 @@ Write the outline. One line per slide, each an assertion rather than a topic ("C
 
 Ask for the time budget if it wasn't given: a five-minute talk supports roughly five to eight slides, a thirty-minute one around twenty. Slide count follows minutes, not the other way around.
 
+## Styling
+
+Link the project's token file in `<head>`, plus `components.css` if the slides use its components, and take every colour and type value from them:
+
+```html
+<link rel="stylesheet" href="tokens.css">
+```
+
+The CSS in the skeleton below is structure only — scaling, track, print rules. Slide styling uses `var(--…)`. A literal colour inside a slide means the system is missing a token; add it rather than working around it.
+
 ## Geometry
 
 1920×1080, fixed, scaled to fit the window. Author at that size — never at 1440 or "responsive-ish" — and let the scale transform handle the viewport.
@@ -24,9 +34,10 @@ Keep all slides in the DOM at once and move the track, so printing produces one 
 <head>
 <meta charset="utf-8">
 <title>Deck title</title>
+<link rel="stylesheet" href="tokens.css">
 <style>
   * { box-sizing: border-box }
-  html, body { margin: 0; background: #111 }
+  html, body { margin: 0; background: black }
   .viewport { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden }
   .frame { position: relative; overflow: hidden }   /* sized to the scaled stage by JS */
   .stage { width: 1920px; height: 1080px; transform-origin: top left }
@@ -38,7 +49,7 @@ Keep all slides in the DOM at once and move the track, so printing produces one 
   @media (prefers-reduced-motion: reduce) { .track { transition: none } }
   @media print {
     @page { size: 1920px 1080px; margin: 0 }
-    html, body { background: #fff }
+    html, body { background: white }
     .viewport { position: static; display: block; overflow: visible }
     .frame { overflow: visible; width: auto !important; height: auto !important }
     .stage { transform: none !important; width: auto; height: auto }

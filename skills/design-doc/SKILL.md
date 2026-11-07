@@ -15,15 +15,17 @@ If the person asked for "two pages", they mean fixed. If they asked for "a repor
 
 ## Geometry
 
+Link the token file in `<head>`, plus `components.css` if the document uses its components, and use its variables for colour, type and space. The rules below are paper geometry only:
+
 ```css
 @page { size: A4; margin: 0; }        /* or: size: letter; */
-body  { margin: 0; background: #fff; }
+body  { margin: 0; background: white; }
 .page { width: 210mm; min-height: 297mm; padding: 24mm 22mm; box-sizing: border-box; }
 .page + .page { break-before: page; }
 
 @media screen {
-  body { background: #e9e7e2; padding: 32px 0; }
-  .page { margin: 0 auto 24px; box-shadow: 0 2px 24px rgb(0 0 0 / .12); }
+  body { background: gainsboro; padding: 32px 0; }
+  .page { margin: 0 auto 24px; box-shadow: 0 2px 24px color-mix(in srgb, black 12%, transparent); }
 }
 ```
 
@@ -53,7 +55,7 @@ For flowing documents, drop the fixed `.page` and set `@page { margin: 22mm }` w
 
 Keep the person's words. You may cut and reorder when asked; you may not paraphrase. If a section is empty because they haven't written it, leave a clearly marked gap rather than inventing text.
 
-No stock photography. Use a placeholder box with a monospace note saying what belongs there.
+No stock photography, and no generated image that is only decoration. When the document needs a real image, generate it with the FLUX tools if they are available; otherwise use a placeholder box with a monospace note saying what belongs there.
 
 ## Finishing
 

@@ -40,7 +40,7 @@ These hold regardless of direction:
 - Body text at least 16px on screen, 12pt in print, 24px on a 1080p slide.
 - Hit targets at least 44px.
 - No emoji as iconography unless the brand already uses it.
-- Don't draw photographs as SVG. Use a placeholder and say what belongs there.
+- Don't draw photographs as SVG. Generate them with the FLUX tools when they are available; otherwise use a placeholder and say what belongs there.
 
 ## When the person gives a reference
 

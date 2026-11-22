@@ -70,6 +70,7 @@ The reverse holds too: a skill you leave out still loads from there if a copy ex
 | `excalidraw` | Excalidraw diagrams through `https://api.excalidraw.com/api/v1/mcp`; needs `EXCALIDRAW_API_KEY` in your environment | none | allowed |
 | `excalidash` | Drawings in your own ExcaliDash through a local `chlee1001/excalidash-mcp`; needs `EXCALIDASH_MCP`, `EXCALIDASH_URL` and `EXCALIDASH_API_KEY` in your environment | none | allowed |
 | `flux` | FLUX image generation by Black Forest Labs at `https://mcp.bfl.ai`, billed to your BFL account | `designer` | denied |
+| `notion` | Search, read and edit pages, databases and comments in your Notion workspace through `https://mcp.notion.com/mcp` | none | asks first |
 | `playwright` | A headless, isolated browser through `@playwright/mcp`, for clicking through pages | `designer` | asks first |
 | `vikunja` | Tasks, projects and labels in your own Vikunja through its built-in MCP server; needs `VIKUNJA_MCP_URL` and `VIKUNJA_MCP_TOKEN` in your environment | none | allowed |
 
@@ -124,6 +125,13 @@ scopes are the real limit: a read-only token keeps the assistant from changing t
 `allowed` everywhere. Set `other_agents` to `ask` in `mcp/vikunja.json` to prompt on every call instead.
 
 Sign in to FLUX once after installing: run `/mcps` in OpenCode and pick `flux`, or `opencode mcp auth flux`.
+
+`notion` is Notion's hosted server over Streamable HTTP, so it signs in with OAuth the same way. Because it can
+create and update pages, databases and comments in a real workspace, every other agent asks before its first call:
+approve once, or for that project, from the prompt. Set `other_agents` to `allow` in `mcp/notion.json` to drop the
+prompt. Business and Enterprise workspaces can use an MCP token from the Notion developer portal instead, but that
+needs an `Authorization` header and `oauth: false` in the entry. Notion is dropping its legacy `…/sse` endpoint, so
+keep the `/mcp` URL.
 
 A server you already configured under the same name keeps your entry, so the kit only manages its rule. The checklist
 says which fields differ. To use the kit's definition instead, delete your entry and run `make install` again. Do the

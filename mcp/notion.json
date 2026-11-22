@@ -1,0 +1,8 @@
+{
+  "description": "Search and edit pages and databases in your Notion workspace through Notion's hosted MCP server (sign in with /mcps)",
+  "other_agents": "ask",
+  "server": {
+    "type": "remote",
+    "url": "https://mcp.notion.com/mcp"
+  }
+}

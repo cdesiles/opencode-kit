@@ -138,11 +138,21 @@ Then open the screenshot and judge it: hierarchy, spacing, alignment, contrast, 
 
 The script loads a page and photographs it. When the artifact has behaviour beyond that — a prototype's flows and states, menus, forms, focus and hover — also drive it with the Playwright tools: open `file://` followed by the file's absolute path, act on it the way a person would, and read the snapshot or take a screenshot after each step. Close the browser when you are done. If the Playwright tools are not available, say which interactions you could not check.
 
+The Playwright tools run headless: they are for checking, not for showing. When the person should look at the result themselves — a new component, a design system, a prototype they will click through — ask with the `question` tool whether they want a window, and open one only if they say yes:
+
+```
+node ~/.config/opencode/lib/design/verify.mjs "design/Foo.html" --headed --hold
+```
+
+`--hold` keeps the window open until they close it, so start it in the background and tell them it is open. A window is for the person, never a substitute for the screenshot review above or for driving the artifact yourself.
+
 Fix what you find and re-run. If something is still wrong after three rounds, hand it over with an honest note about what's off.
 
 ## Handing over
 
 Name the file. Two or three sentences: what's in it, any caveat, what you'd do next if they want more. The chat panel is narrow — prose, not tables. Don't narrate the work, don't summarise the process, don't pad.
+
+If they have not seen it rendered yet, offer the window once as part of the handover, and don't reopen the question afterwards.
 
 ## What you can't do
 

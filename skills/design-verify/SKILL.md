@@ -54,6 +54,18 @@ Open the file. Judge, in this order:
 
 Fix from the error text directly; don't re-read the whole file to find the line. Re-run after each substantive change. Three rounds is the limit — after that, hand it over with an honest note about what's still wrong.
 
+## Show it to the person
+
+The MCP browser runs headless, so it produces screenshots and nothing else. When the person should look at the result themselves — a component they are reviewing, a design system, a prototype they will click — ask first, then open a real Chromium window on the same served page:
+
+```
+node ~/.config/opencode/lib/design/verify.mjs "design/Foo.html" --headed --hold
+```
+
+Both flags are needed: `--headed` shows the window, `--hold` keeps it open until they close it. That means the command runs for as long as the window lives, so start it in the background and say it is open. Same viewport flags as any other run, so show what you verified.
+
+Offer it, don't impose it: never open a window unasked, and never let a window replace the screenshot review or the behavioural checks — they catch what a person scrolling around will miss.
+
 ## Export
 
 When the artifact is going somewhere without the folder:

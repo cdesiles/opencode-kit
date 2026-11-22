@@ -179,3 +179,5 @@ The swatch paints itself from the token and prints the value the browser resolve
 Run `design-verify` on the specimen. It lists any colour literal in the specimen or in `components.css`; there should be none. Check that every swatch label is legible, every component is aligned to the same baseline grid, and no sample text overflows its container at 1024px wide.
 
 When the system goes to another app, it copies `tokens.css` and `components.css` unchanged, plus the font `<link>` from the specimen — not the specimen itself. Export a standalone copy of the specimen only if it needs to be read somewhere without the folder.
+
+Then offer to show the specimen in a browser window, with `design-verify`'s `--headed --hold` run: a design system is judged by scrolling and hovering it, not from one screenshot. Ask first; never open a window unasked.

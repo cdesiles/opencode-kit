@@ -71,6 +71,7 @@ The reverse holds too: a skill you leave out still loads from there if a copy ex
 | `excalidash` | Drawings in your own ExcaliDash through a local `chlee1001/excalidash-mcp`; needs `EXCALIDASH_MCP`, `EXCALIDASH_URL` and `EXCALIDASH_API_KEY` in your environment | none | allowed |
 | `flux` | FLUX image generation by Black Forest Labs at `https://mcp.bfl.ai`, billed to your BFL account | `designer` | denied |
 | `playwright` | A headless, isolated browser through `@playwright/mcp`, for clicking through pages | `designer` | asks first |
+| `vikunja` | Tasks, projects and labels in your own Vikunja through its built-in MCP server; needs `VIKUNJA_MCP_URL` and `VIKUNJA_MCP_TOKEN` in your environment | none | allowed |
 
 Each `mcp/<name>.json` holds the entry written under `mcp.servers.<name>`, plus an `other_agents` effect. An agent opts
 in by allowing `<name>_*` in its permissions, which is also how the checklist knows to list the server under it. Every
@@ -108,6 +109,19 @@ update it. The entry names the variables rather than their values, so a changed 
 
 A first install ticks every server, so untick `excalidash` unless you run ExcaliDash: without those variables the
 server cannot start.
+
+`vikunja` uses the MCP server built into Vikunja 2.7.0 and later, at `/api/v2/mcp`. Create a token under
+Settings > MCP with the permissions the assistant should have (Read only, Typed tools read + write, or Full access),
+then export the endpoint and the token:
+
+```sh
+export VIKUNJA_MCP_URL=https://tasks.example.com/api/v2/mcp
+export VIKUNJA_MCP_TOKEN=tk_...                # Settings > MCP, shown once
+```
+
+Vikunja does not do MCP OAuth yet, so the entry sets `oauth: false` and sends the token as a bearer header. The token
+scopes are the real limit: a read-only token keeps the assistant from changing tasks even though the server is
+`allowed` everywhere. Set `other_agents` to `ask` in `mcp/vikunja.json` to prompt on every call instead.
 
 Sign in to FLUX once after installing: run `/mcps` in OpenCode and pick `flux`, or `opencode mcp auth flux`.
 

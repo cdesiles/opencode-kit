@@ -1,0 +1,13 @@
+{
+  "description": "Tasks, projects and labels in your own Vikunja through its built-in MCP server, 2.7.0 or newer (set VIKUNJA_MCP_URL and VIKUNJA_MCP_TOKEN in your environment)",
+  "other_agents": "allow",
+  "env": ["VIKUNJA_MCP_URL", "VIKUNJA_MCP_TOKEN"],
+  "server": {
+    "type": "remote",
+    "url": "{env:VIKUNJA_MCP_URL}",
+    "oauth": false,
+    "headers": {
+      "Authorization": "Bearer {env:VIKUNJA_MCP_TOKEN}"
+    }
+  }
+}

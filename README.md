@@ -78,6 +78,10 @@ other agent gets a global `<name>_*` rule with that effect; agent rules come aft
 In practice, `designer` always has both. In `build`, Playwright asks before it is used: approve once, or always for
 that project. FLUX stays out of `build`'s tools, along with its long server instructions.
 
+A server that reads environment variables lists them in an `"env"` array in its `mcp/<name>.json`. `make install` and
+`make check` print a `WARN` for each one that is unset in the current environment, so export it (in your shell profile)
+before starting OpenCode.
+
 Sign in to FLUX once after installing: run `/mcps` in OpenCode and pick `flux`, or `opencode mcp auth flux`.
 
 A server you already configured under the same name keeps your entry, so the kit only manages its rule. The checklist

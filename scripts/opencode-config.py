@@ -234,7 +234,9 @@ def sync_servers(data: dict, repo: Path, chosen: set, where: Path) -> list:
             mcp["servers"][name] = server
             entry = server
             notes.append(f"MCP server added to {where}: {name}")
-            if server.get("type") == "remote" and server.get("oauth") is not False:
+            headers = server.get("headers")
+            has_auth = isinstance(headers, dict) and any(str(k).lower() == "authorization" for k in headers)
+            if server.get("type") == "remote" and server.get("oauth") is not False and not has_auth:
                 notes.append(f"  sign in once: /mcps in OpenCode, or opencode mcp auth {name}")
         elif name not in chosen and entry == server:
             mcp = data["mcp"]

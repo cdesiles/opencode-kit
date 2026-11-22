@@ -491,6 +491,12 @@ def pick(kit: Kit, chosen: set, installed: set, foreign: dict, target: str):
         raise PickerError(f"the terminal cannot show the checklist ({err})") from err
 
 
+def missing_env(server: Item) -> list:
+    """The environment variables a server's "env" list names that are unset or empty."""
+    names = server.meta.get("env", [])
+    return [n for n in names if isinstance(n, str) and not os.environ.get(n)]
+
+
 def select(opencode_dir: Path, repo: Path, out: Path, agents: str, skills: str, servers: str) -> int:
     kit = Kit(repo)
     if not kit.everything():
@@ -536,6 +542,12 @@ def select(opencode_dir: Path, repo: Path, out: Path, agents: str, skills: str, 
         managed = name in plan["mcp"] and kit.servers[name].meta.get("other_agents")
         tail = "; the kit sets only its permission rule" if managed else ""
         print(f"mcp: {name} keeps your own entry, which differs from mcp/{name}.json ({', '.join(keys)}){tail}")
+    for name in plan["mcp"]:
+        if name in foreign:
+            continue
+        for var in missing_env(kit.servers[name]):
+            print(f"WARN  mcp: {name} reads {var}, which is not set in this environment. Please check that it is")
+            print(f"      exported (for example in your shell profile) before you start OpenCode.")
     return 0
 
 
@@ -599,6 +611,8 @@ def check(opencode_dir: Path, repo: Path) -> int:
             report("ok", f"MCP server {name} in {config}")
             if policy and name not in ruled:
                 report("MISS", f"permission {rule} in {config} (run make install)")
+            for var in missing_env(item):
+                report("WARN", f"MCP server {name} reads {var}, which is not set in this environment")
         elif name in foreign:
             own = f"MCP server {name}: your own entry in {config}, which differs in {', '.join(foreign[name])}"
             if name in ruled:

@@ -1,0 +1,13 @@
+{
+  "description": "Drawings in your own ExcaliDash through chlee1001/excalidash-mcp, built from source (set EXCALIDASH_MCP, EXCALIDASH_URL and EXCALIDASH_API_KEY in your environment)",
+  "other_agents": "allow",
+  "env": ["EXCALIDASH_MCP", "EXCALIDASH_URL", "EXCALIDASH_API_KEY"],
+  "server": {
+    "type": "local",
+    "command": ["node", "{env:EXCALIDASH_MCP}"],
+    "environment": {
+      "EXCALIDASH_URL": "{env:EXCALIDASH_URL}",
+      "EXCALIDASH_API_KEY": "{env:EXCALIDASH_API_KEY}"
+    }
+  }
+}

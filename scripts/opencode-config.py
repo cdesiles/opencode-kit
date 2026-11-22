@@ -254,13 +254,15 @@ def sync_servers(data: dict, repo: Path, chosen: set, where: Path) -> list:
         if not isinstance(rules, list):
             raise Refusal(f"{where}: 'permissions' is not an array, refusing to edit.")
         keep = name in chosen
-        if keep and own not in rules:
-            data["permissions"] = rules + [own]
-            notes.append(f"permission added to {where}: {own['action']} {own['effect']} for agents that don't allow it")
-        elif not keep and own in rules:
-            rules = [r for r in rules if r != own]
-            if rules:
-                data["permissions"] = rules
+        mine = [r for r in rules if isinstance(r, dict) and r.get("action") == own["action"]]
+        if keep and mine != [own]:
+            data["permissions"] = [r for r in rules if r not in mine] + [own]
+            verb = "replaced" if mine else "added"
+            notes.append(f"permission {verb} in {where}: {own['action']} {own['effect']} for agents that don't allow it")
+        elif not keep and mine:
+            rest = [r for r in rules if r not in mine]
+            if rest:
+                data["permissions"] = rest
             else:
                 data.pop("permissions", None)
             notes.append(f"permission removed from {where}: {own['action']} {own['effect']}")

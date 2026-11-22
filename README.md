@@ -67,7 +67,8 @@ The reverse holds too: a skill you leave out still loads from there if a copy ex
 
 | Server | What it gives | Agents that allow it | Every other agent |
 | --- | --- | --- | --- |
-| `excalidraw` | Excalidraw diagrams through `https://api.excalidraw.com/api/v1/mcp`; needs `EXCALIDRAW_API_KEY` in your environment | none | asks first |
+| `excalidraw` | Excalidraw diagrams through `https://api.excalidraw.com/api/v1/mcp`; needs `EXCALIDRAW_API_KEY` in your environment | none | allowed |
+| `excalidash` | Drawings in your own ExcaliDash through a local `chlee1001/excalidash-mcp`; needs `EXCALIDASH_MCP`, `EXCALIDASH_URL` and `EXCALIDASH_API_KEY` in your environment | none | allowed |
 | `flux` | FLUX image generation by Black Forest Labs at `https://mcp.bfl.ai`, billed to your BFL account | `designer` | denied |
 | `playwright` | A headless, isolated browser through `@playwright/mcp`, for clicking through pages | `designer` | asks first |
 
@@ -75,12 +76,38 @@ Each `mcp/<name>.json` holds the entry written under `mcp.servers.<name>`, plus 
 in by allowing `<name>_*` in its permissions, which is also how the checklist knows to list the server under it. Every
 other agent gets a global `<name>_*` rule with that effect; agent rules come after global ones, so the opt-in wins.
 
+The two drawing servers are `allowed` everywhere, so a diagram never waits for a prompt. OpenCode's base policy would
+allow them anyway; the explicit rule keeps them allowed if you later add a broad `ask` rule. Set `other_agents` back to
+`ask` in one `mcp/*.json` to restore the prompt for that server.
+
 In practice, `designer` always has both. In `build`, Playwright asks before it is used: approve once, or always for
 that project. FLUX stays out of `build`'s tools, along with its long server instructions.
 
 A server that reads environment variables lists them in an `"env"` array in its `mcp/<name>.json`. `make install` and
 `make check` print a `WARN` for each one that is unset in the current environment, so export it (in your shell profile)
 before starting OpenCode.
+
+The background service holds the environment it was started with, and it is the process that runs MCP servers. After
+adding an export, run `opencode service restart`; reconnecting from a new terminal is not enough, and a variable the
+service cannot see reaches the server as an empty string.
+
+`excalidash` is the only server that runs from a local checkout, the third-party `chlee1001/excalidash-mcp`. Clone
+and build it once, export the three variables, then run `make install` and tick `excalidash`:
+
+```sh
+git clone https://github.com/chlee1001/excalidash-mcp.git
+cd excalidash-mcp && npm ci && npm run build   # Node 22 or newer
+export EXCALIDASH_MCP="$PWD/dist/index.js"     # absolute path, no ~
+export EXCALIDASH_URL=https://draw.example.com
+export EXCALIDASH_API_KEY=exd_...              # Settings > API Keys, with Read and Write drawings
+```
+
+The adapter is not on npm: its `package.json` is private and has no `prepare` script, so `npx` has nothing to run,
+and `npx excalidash-mcp` would install a different adapter by another author. Pull and run `npm run build` again to
+update it. The entry names the variables rather than their values, so a changed value needs no reinstall.
+
+A first install ticks every server, so untick `excalidash` unless you run ExcaliDash: without those variables the
+server cannot start.
 
 Sign in to FLUX once after installing: run `/mcps` in OpenCode and pick `flux`, or `opencode mcp auth flux`.
 

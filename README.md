@@ -67,6 +67,7 @@ The reverse holds too: a skill you leave out still loads from there if a copy ex
 
 | Server | What it gives | Agents that allow it | Every other agent |
 | --- | --- | --- | --- |
+| `excalidraw` | Excalidraw diagrams through `https://api.excalidraw.com/api/v1/mcp`; needs `EXCALIDRAW_API_KEY` in your environment | none | asks first |
 | `flux` | FLUX image generation by Black Forest Labs at `https://mcp.bfl.ai`, billed to your BFL account | `designer` | denied |
 | `playwright` | A headless, isolated browser through `@playwright/mcp`, for clicking through pages | `designer` | asks first |
 

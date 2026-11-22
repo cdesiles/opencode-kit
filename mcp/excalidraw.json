@@ -1,0 +1,12 @@
+{
+  "description": "Excalidraw diagrams through the Excalidraw API (set EXCALIDRAW_API_KEY in your environment)",
+  "other_agents": "ask",
+  "server": {
+    "type": "remote",
+    "url": "https://api.excalidraw.com/api/v1/mcp",
+    "enabled": true,
+    "headers": {
+      "Authorization": "Bearer {env:EXCALIDRAW_API_KEY}"
+    }
+  }
+}

@@ -71,7 +71,7 @@ The reverse holds too: a skill you leave out still loads from there if a copy ex
 | `excalidash` | Drawings in your own ExcaliDash through a local `chlee1001/excalidash-mcp`; needs `EXCALIDASH_MCP`, `EXCALIDASH_URL` and `EXCALIDASH_API_KEY` in your environment | none | allowed |
 | `flux` | FLUX image generation by Black Forest Labs at `https://mcp.bfl.ai`, billed to your BFL account | `designer` | denied |
 | `notion` | Search, read and edit pages, databases and comments in your Notion workspace through `https://mcp.notion.com/mcp` | none | allowed |
-| `playwright` | A headless, isolated browser through `@playwright/mcp`, for clicking through pages | `designer` | asks first |
+| `playwright` | A headless, isolated browser through `@playwright/mcp`, for clicking through pages | `designer` | allowed |
 | `vikunja` | Tasks, projects and labels in your own Vikunja through its built-in MCP server; needs `VIKUNJA_MCP_URL` and `VIKUNJA_MCP_TOKEN` in your environment | none | allowed |
 
 Each `mcp/<name>.json` holds the entry written under `mcp.servers.<name>`, plus an `other_agents` effect. An agent opts
@@ -82,8 +82,7 @@ The two drawing servers are `allowed` everywhere, so a diagram never waits for a
 allow them anyway; the explicit rule keeps them allowed if you later add a broad `ask` rule. Set `other_agents` back to
 `ask` in one `mcp/*.json` to restore the prompt for that server.
 
-In practice, `designer` always has both. In `build`, Playwright asks before it is used: approve once, or always for
-that project. FLUX stays out of `build`'s tools, along with its long server instructions.
+In practice, `designer` always has both, and every agent can use Playwright without asking. FLUX stays out of `build`'s tools, along with its long server instructions.
 
 A server that reads environment variables lists them in an `"env"` array in its `mcp/<name>.json`. `make install` and
 `make check` print a `WARN` for each one that is unset in the current environment, so export it (in your shell profile)
